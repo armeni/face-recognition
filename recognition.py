@@ -12,18 +12,15 @@ from train_model import train_model
 
 
 def recognize():
-	print("[INFO] loading face detector")
 	protoPath = os.path.sep.join(["models", "deploy.prototxt"])
 	modelPath = os.path.sep.join(["models", "res10_300x300_ssd_iter_140000.caffemodel"])
 	detector = cv2.dnn.readNetFromCaffe(protoPath, modelPath)
 
-	print("[INFO] loading face recognizer")
 	embedder = cv2.dnn.readNetFromTorch("models/openface_nn4.small2.v1.t7")
 	recognizer = pickle.loads(open("output/recognizer.pickle", "rb").read())
 	le = pickle.loads(open("output/le.pickle", "rb").read())
 
-	print("[INFO] starting video stream")
-	vs = VideoStream(src=0).start()
+	vs = VideoStream(src=0 + cv2.CAP_DSHOW).start()
 	time.sleep(2.0)
 
 	fps = FPS().start()
@@ -61,7 +58,6 @@ def recognize():
 
 				preds = recognizer.predict_proba(vec)[0]
 				j = np.argmax(preds)
-				proba = preds[j]
 				name = le.classes_[j]
 
 				if name == "unknown":
@@ -69,15 +65,7 @@ def recognize():
 				else:
 					count -= 1
 
-				text = "{}: {:.2f}%".format(name, proba * 100)
-				y = startY - 10 if startY - 10 > 10 else startY + 10
-				cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 0, 255), 2)
-				cv2.putText(frame, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
-
 		fps.update()
-		cv2.imshow("Frame", frame)
-		key = cv2.waitKey(1) & 0xFF
-
 		time.sleep(0.25)
 
 	def newdir(id_index):
@@ -95,9 +83,6 @@ def recognize():
 		train_model()
 
 	fps.stop()
-	print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
-	print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
-
 	cv2.destroyAllWindows()
 	vs.stop()
 

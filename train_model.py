@@ -4,14 +4,10 @@ import pickle
 
 
 def train_model():
-	print("[INFO] loading face embeddings")
 	data = pickle.loads(open('output/embeddings.pickle', "rb").read())
-
-	print("[INFO] encoding labels")
 	le = LabelEncoder()
 	labels = le.fit_transform(data["names"])
 
-	print("[INFO] training model")
 	recognizer = SVC(C=1.0, kernel="linear", probability=True)
 	recognizer.fit(data["embeddings"], labels)
 

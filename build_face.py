@@ -7,7 +7,7 @@ import os
 
 def build_face(path):
 	detector = cv2.CascadeClassifier("models/haarcascade_frontalface_default.xml")
-	vs = VideoStream(src=0).start()
+	vs = VideoStream(src=0 + cv2.CAP_DSHOW).start()
 
 	time.sleep(2.0)
 	total = 0
@@ -23,9 +23,6 @@ def build_face(path):
 
 		for (x, y, w, h) in rects:
 			cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-		cv2.imshow("Frame", frame)
-		key = cv2.waitKey(1) & 0xFF
 
 		p = os.path.sep.join([path, "{}.png".format(str(total).zfill(5))])
 		cv2.imwrite(p, orig)

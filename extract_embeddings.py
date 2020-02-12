@@ -18,7 +18,6 @@ def extract_embeddings():
 	total = 0
 
 	for (i, imagePath) in enumerate(imagePaths):
-		print("[INFO] processing image {}/{}".format(i + 1, len(imagePaths)))
 		name = imagePath.split(os.path.sep)[-2]
 
 		image = cv2.imread(imagePath)
@@ -54,7 +53,6 @@ def extract_embeddings():
 				knownEmbeddings.append(vec.flatten())
 				total += 1
 
-	print("[INFO] serializing {} encodings".format(total))
 	data = {"embeddings": knownEmbeddings, "names": knownNames}
 	f = open("output/embeddings.pickle", "wb")
 	f.write(pickle.dumps(data))
